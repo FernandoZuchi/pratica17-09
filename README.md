@@ -266,18 +266,106 @@ export default App
 ```
 
 ## **Padrões comuns no tratamento de eventos React**
+
 Os padrões de manipulação de eventos referem-se às técnicas para manipular interações do usuário dentro dos componentes React.
 
-Esses padrões incluem, mas não estão limitados a:
+Dentro da pasta `Components`, crie o componente `CheckLogin.jsx`:
 
-- Manipuladores de eventos de ligação para useCallbackmemorizar o manipulador
-- Manipuladores de eventos com parâmetros (você viu isso na seção sobre como passar argumentos para manipuladores de eventos)
-- Manipulação de eventos condicionais
-- Delegação de eventos
-- Evento borbulhando
-- Manipulação otimizada para listas
-- Funções de seta em linha (funções anônimas que você passa para manipuladores de eventos)
+```javascript
+import React, { useState } from 'react'
 
-Aqui está um exemplo useCallbackpara evitar a criação de uma nova função em cada renderização:
+const CheckLogin = () => {
+    const [isLoggedIn, setLoggedIn] = useState(false);
 
-# pareiaq 
+    const toggleLogin = () => {
+        setLoggedIn(!isLoggedIn);
+    }
+
+    const handleLogin = () => {
+        if(isLoggedIn) {
+            alert('AVISO: Usuário está logado!');
+        }
+        else {
+            alert('AVISO: Usuário não está logado!');
+        }
+    }
+    
+
+    return (
+        <div>
+            <h2>
+                {isLoggedIn ? 'Usuário logado' : 'Usuário não logado'}
+            </h2>
+            <button onClick={handleLogin}>
+                Checar estado
+            </button>
+            <button onClick={toggleLogin}>
+                { isLoggedIn ? 'Log Out' : 'Log In'}
+            </button>
+        </div>
+    )
+}
+
+export default CheckLogin
+```
+
+Renderize isso em tela:
+
+```javascript
+import './App.css'
+import Button from './Components/Button'
+import CheckLogin from './Components/CheckLogin'
+import CounterButton from './Components/CounterButton'
+import Input from './Components/Input'
+import TaskManager from './Components/TaskManager'
+
+function App() {
+  return (
+    <>
+      {/* <Button /> */}
+      {/* <CounterButton /> */}
+      {/* <Input /> */}
+      {/* <TaskManager /> */}
+      <CheckLogin />
+    </>
+  )
+}
+
+export default App
+```
+
+## **Melhores práticas para tratamento eficiente de eventos no React (EXTRA)**
+
+### Evite usar funções de seta anônimas dentro de eventos
+
+Parece conveniente usar funções de seta diretamente em eventos, como `onClick={() => console.log('button clicked')})`. A desvantagem disso é que pode levar a problemas de desempenho porque uma nova função é criada em cada renderização.
+
+Sempre defina a função do manipulador a ser executada quando o evento for disparado fora do método render para evitar esses problemas de desempenho.
+
+### Memorize eventos com o gancho useCallback
+
+Para componentes que são renderizados novamente com frequência, memorizar os manipuladores nele com o hook `useCallback` pode evitar renderizações novamente desnecessárias. Isso é útil ao passar eventos como props para componentes filhos que podem ser renderizados novamente desnecessariamente.
+
+### Evite comportamento padrão quando necessário
+
+Use `event.preventDefault()` em seus manipuladores de eventos quando precisar impedir que o navegador execute ações padrão, como enviar um formulário. No entanto, você deve usar esse método com prudência para evitar bloquear comportamentos do navegador desnecessariamente.
+
+### Limpar ouvintes de eventos
+
+Se você configurar seus ouvintes de eventos em `useEffect`, sempre retorne uma função de limpeza para remover o ouvinte de eventos. Caso contrário, isso causará vazamentos de memória.
+
+### Manipuladores de eventos de teste
+
+Certifique-se de que seus manipuladores de eventos estejam cobertos em seus testes unitários e de integração. Frameworks de teste como Jest combinados com React Testing Library podem ajudar a verificar se seus manipuladores de eventos estão funcionando conforme o esperado.
+
+# Conclusão
+
+Nesta prática, você aprendeu os fundamentos do tratamento de eventos no React, com foco em como usar o sistema de eventos sintéticos do React para criar eventos em aplicativos da web React.
+
+Exploramos a definição de manipuladores de eventos, a passagem de argumentos e a prevenção de comportamentos padrão do navegador para melhorar a experiência do usuário. Com esse conhecimento básico, você pode seguir aprofundando em React e implementar o tratamento de eventos em seus projetos para melhorar tanto a funcionalidade quanto o engajamento do usuário.
+
+Agradeço aos que chegaram até aqui, focos nos estudos!
+
+Abraços, 
+Fernando Zuchi
+
